@@ -23,21 +23,20 @@ public class Graph : MonoBehaviour
     }
 
     public Transform pointPrefab;
-    public Mesh instanceMesh;
     public Material material;
     public ComputeShader computeShader;
 
-    [Range(10, 100)]public int resolution = 50;
+    [Range(1, 100)]public int resolution = 50;
     [Range(1, 10)] public static float frequnecy = 1f;
 
     public GraphFunctionName functionName;
     public DrawMeshInstanceWay renderWay;
 
     GraphFunction[] functions = { SinFunction, MultiSinFunction, Ripple, Sin2DFunction, MultiSin2DFunction, MultiWave, Ripple2D };
-    const float pi = Mathf.PI;
 
     DrawMesh drawMesh;
-    DrawMeshInstance drawMeshInstance;
+    DrawMeshIndirect drawMeshIndirect;
+    RenderMeshIndirect renderMeshIndirect;
 
     private void Awake()
     {
@@ -49,9 +48,10 @@ public class Graph : MonoBehaviour
                 drawMesh = new DrawMesh();
                 break;
             case DrawMeshInstanceWay.DrawMeshInstance:
-                drawMeshInstance = new DrawMeshInstance();
+                drawMeshIndirect = new DrawMeshIndirect();
                 break;
             case DrawMeshInstanceWay.RenderMeshInstance:
+                renderMeshIndirect = new();
                 break;
             default:
                 break;
@@ -61,19 +61,24 @@ public class Graph : MonoBehaviour
         drawMesh?.Init(resolution, transform, pointPrefab, f);
 
         Mesh mesh = pointPrefab.GetComponent<MeshFilter>().sharedMesh;
-        instanceMesh = mesh;
-        drawMeshInstance?.Init(instanceMesh, material, computeShader, resolution, f);
+        drawMeshIndirect?.Init(mesh, material, computeShader, resolution, f);
+        renderMeshIndirect?.Init(mesh, material, resolution, f);
     }
 
     private void Update()
     {
         drawMesh?.Update();
-        drawMeshInstance?.UpdateBuffers();
-        drawMeshInstance?.Draw();
+
+        drawMeshIndirect?.UpdateBuffers();
+        drawMeshIndirect?.Draw();
+
+        renderMeshIndirect?.UpdateBuffers();
+        renderMeshIndirect?.Draw();
     }
 
     void OnDisable()
     {
-        drawMeshInstance?.OnDisable();
+        drawMeshIndirect?.OnDestroy();
+        renderMeshIndirect?.OnDestroy();
     }
 }

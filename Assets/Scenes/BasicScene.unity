@@ -150,12 +150,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointPrefab: {fileID: 8643233187277934335, guid: b87907dc75b0fd84aac94e1238511583,
     type: 3}
-  instanceMesh: {fileID: 0}
   material: {fileID: 2100000, guid: 007d506e2b6921549a39c0b87d3d2a6d, type: 2}
   computeShader: {fileID: 7200000, guid: 409d5ee6ef8ce414286defb644933d23, type: 3}
-  resolution: 100
-  functionName: 6
-  renderWay: 1
+  resolution: 1
+  functionName: 0
+  renderWay: 2
 --- !u!4 &93695403
 Transform:
   m_ObjectHideFlags: 0
@@ -181,6 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1490462193}
   - component: {fileID: 1490462192}
+  - component: {fileID: 1490462194}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -265,6 +265,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1490462194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490462191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &1936305846
 GameObject:
   m_ObjectHideFlags: 0

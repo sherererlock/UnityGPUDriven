@@ -1,71 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public class DrawMeshInstance
+public class DrawMeshIndirect : DrawMeshGPU
 {
-    ComputeBuffer l2wMatBuffer;
     ComputeBuffer cullResult;
     ComputeBuffer argsBuffer;
-
-    List<Matrix4x4> l2wMatrixs = new List<Matrix4x4>();
     private uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
 
     Camera mainCamera;
     int kernel;
-    Mesh instanceMesh;
-    Material instanceMaterial;
-    int resolution;
     int subMeshIndex = 0;
-    GraphFunction graphf;
 
     ComputeShader cullingComputer;
     public void Init(Mesh mesh, Material material, ComputeShader compute, int res, GraphFunction f)
     {
+        base.Init(mesh, material, res, f);
         kernel = compute.FindKernel("CSMain");
         mainCamera = Camera.main;
         cullingComputer = compute;
-        instanceMesh = mesh;
-        instanceMaterial = material;
-        resolution = res;
-        graphf = f;
 
         cullResult = new ComputeBuffer(resolution * resolution, sizeof(float) * 16, ComputeBufferType.Append);
         argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
 
-    private void UpdatePosition()
+    public override void UpdateBuffers() 
     {
-        float step = 2f / resolution;
-        Vector3 scale = Vector3.one * step;
-        Vector3 position = Vector3.zero;
-        float t = Time.time;
-        for (int z = 0; z < resolution; z++)
-        {
-            position.z = (z + 0.5f) * step - 1f;
-            for (int x = 0; x < resolution; x++)
-            {
-                position.x = (x + 0.5f) * step - 1f;
-                position.y = graphf(position.x, position.z, t);
-                l2wMatrixs.Add(Matrix4x4.TRS(position, Quaternion.identity, scale));
-            }
-        }
-    }
+        base.UpdateBuffers();
 
-    public void UpdateBuffers()
-    {
         if (instanceMesh != null)
             subMeshIndex = Mathf.Clamp(subMeshIndex, 0, instanceMesh.subMeshCount - 1);
-
-        l2wMatBuffer?.Release();
-
-        l2wMatBuffer = new ComputeBuffer(resolution * resolution, 16 * sizeof(float));
-        l2wMatrixs.Clear();
-
-        UpdatePosition();
-
-        l2wMatBuffer.SetData(l2wMatrixs);
 
         // Indirect args
         if (instanceMesh != null)
@@ -82,7 +45,7 @@ public class DrawMeshInstance
         argsBuffer.SetData(args);
     }
 
-    public void Draw()
+    public override void Draw()
     {
         Profiler.BeginSample("DrawMeshInstance");
 
@@ -94,10 +57,9 @@ public class DrawMeshInstance
         Profiler.EndSample();
     }
 
-    public void OnDisable()
+    public override void OnDestroy()
     {
-        l2wMatBuffer?.Release();
-        l2wMatBuffer = null;
+        base.OnDestroy();
 
         cullResult?.Release();
         cullResult = null;
