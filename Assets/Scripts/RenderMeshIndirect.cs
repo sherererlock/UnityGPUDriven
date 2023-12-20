@@ -27,6 +27,7 @@ public class RenderMeshIndirect : DrawMeshGPU
 
     public override void Draw()
     {
+        instanceMaterial.SetBuffer("positionBuffer", l2wMatBuffer);
         Graphics.RenderMeshIndirect(renderParams, instanceMesh, commandBuffer, commandCount);
     }
 

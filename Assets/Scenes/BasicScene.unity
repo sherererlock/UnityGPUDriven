@@ -152,9 +152,9 @@ MonoBehaviour:
     type: 3}
   material: {fileID: 2100000, guid: 007d506e2b6921549a39c0b87d3d2a6d, type: 2}
   computeShader: {fileID: 7200000, guid: 409d5ee6ef8ce414286defb644933d23, type: 3}
-  resolution: 1
-  functionName: 0
-  renderWay: 2
+  resolution: 100
+  functionName: 6
+  renderWay: 1
 --- !u!4 &93695403
 Transform:
   m_ObjectHideFlags: 0
