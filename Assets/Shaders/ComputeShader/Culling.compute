@@ -1,14 +1,60 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel Culling
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-RWTexture2D<float4> Result;
+uint _Count;
+float4 _Planes[6];
+RWStructuredBuffer<float4x4> _l2wMats;
+AppendStructuredBuffer<float4x4> _cullingResults;
 
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+inline bool IsOutSideOfThePlane(float4 plane, float3 position)
 {
-    // TODO: insert actual code here!
+    if (dot(plane.xyz, position) + plane.w > 0)
+        return true;
 
-    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    return false;
+}
+
+inline void FrustumCulling(uint idx)
+{
+    float4x4 l2wmat = _l2wMats[idx];
+    //float3 extent = float3(0.5, 0.5, 0.5);
+    float3 extent = float3(1, 1, 1);
+    float3 boundMax = extent;
+    float3 boundMin = -extent;
+
+    float4 boundVerts[8];
+    boundVerts[0] = mul(l2wmat, float4(boundMin, 1));
+    boundVerts[1] = mul(l2wmat, float4(boundMax, 1));
+    boundVerts[2] = mul(l2wmat, float4(boundMax.x, boundMax.y, boundMin.z, 1));
+    boundVerts[3] = mul(l2wmat, float4(boundMax.x, boundMin.y, boundMax.z, 1));
+    boundVerts[6] = mul(l2wmat, float4(boundMax.x, boundMin.y, boundMin.z, 1));
+    boundVerts[4] = mul(l2wmat, float4(boundMin.x, boundMax.y, boundMax.z, 1));
+    boundVerts[5] = mul(l2wmat, float4(boundMin.x, boundMax.y, boundMin.z, 1));
+    boundVerts[7] = mul(l2wmat, float4(boundMin.x, boundMin.y, boundMax.z, 1));
+
+    for (int i = 0; i < 6; i ++)
+    {
+        for (int j = 0; j < 8; j ++)
+        {
+            float3 boundPosition = boundVerts[j].xyz;
+
+            if (!IsOutSideOfThePlane(_Planes[i], boundPosition))
+                break;
+            if (j == 7)
+                return;
+        }
+    }
+
+    _cullingResults.Append(l2wmat);
+}
+
+[numthreads(64, 1, 1)]
+void Culling (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= _Count)
+        return;
+
+    FrustumCulling(id.x);
 }

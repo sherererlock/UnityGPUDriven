@@ -1,0 +1,49 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel UpdatePosition
+
+
+float _ATime;
+uint _Resolution;
+float3 _Offset;
+
+RWStructuredBuffer<float4x4> _l2wMats;
+
+#define PI          3.14159265358979323846
+
+
+inline float Ripple2D(float x, float z, float t)
+{
+    float d = sqrt(x * x + z * z);
+    float y = sin(PI * (4.0 * d - t));
+    y /= 1.0 + 10.0 + d;
+
+    return y;
+}
+
+[numthreads(8,8,1)]
+void UpdatePosition(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= _Resolution || id.y >= _Resolution)
+        return;
+
+    float x = id.x;
+    float z = id.y;
+
+    float3 position = float3(0, 0, 0);
+    float step = 2.0 / _Resolution;
+
+    position.z = (z + 0.5f) * step - 1.0f + _Offset.z;
+    position.x = (x + 0.5f) * step - 1.0f + _Offset.x;
+
+    position.y = Ripple2D(position.x, position.z, _ATime) + _Offset.y;
+
+    float4x4 modelMatrix = float4x4(
+        step, 0.0f, 0.0f, position.x,
+        0.0f, step, 0.0f, position.y,
+        0.0f, 0.0f, step, position.z,
+        0.0f, 0.0f, 0.0f, 1.0f
+        );
+
+    uint index = id.y * _Resolution + id.x;
+    _l2wMats[index] = modelMatrix;
+}

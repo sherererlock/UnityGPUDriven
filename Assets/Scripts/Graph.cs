@@ -24,7 +24,8 @@ public class Graph : MonoBehaviour
 
     public Transform pointPrefab;
     public Material material;
-    public ComputeShader computeShader;
+    public ComputeShader cullingShader;
+    public ComputeShader calcPostionShader;
 
     [Range(1, 100)]public int resolution = 50;
     [Range(1, 10)] public static float frequnecy = 1f;
@@ -49,9 +50,11 @@ public class Graph : MonoBehaviour
                 break;
             case DrawMeshInstanceWay.DrawMeshInstance:
                 drawMeshIndirect = new DrawMeshIndirect();
+                drawMeshIndirect.calcPositionShader = calcPostionShader;
                 break;
             case DrawMeshInstanceWay.RenderMeshInstance:
                 renderMeshIndirect = new();
+                renderMeshIndirect.calcPositionShader = calcPostionShader;
                 break;
             default:
                 break;
@@ -61,7 +64,7 @@ public class Graph : MonoBehaviour
         drawMesh?.Init(resolution, transform, pointPrefab, f);
 
         Mesh mesh = pointPrefab.GetComponent<MeshFilter>().sharedMesh;
-        drawMeshIndirect?.Init(mesh, material, computeShader, resolution, f);
+        drawMeshIndirect?.Init(mesh, material, cullingShader, resolution, f);
         renderMeshIndirect?.Init(mesh, material, resolution, f);
     }
 
@@ -69,10 +72,10 @@ public class Graph : MonoBehaviour
     {
         drawMesh?.Update();
 
-        drawMeshIndirect?.UpdateBuffers();
+        drawMeshIndirect?.UpdateBuffers(transform.position);
         drawMeshIndirect?.Draw();
 
-        renderMeshIndirect?.UpdateBuffers();
+        renderMeshIndirect?.UpdateBuffers(transform.position);
         renderMeshIndirect?.Draw();
     }
 

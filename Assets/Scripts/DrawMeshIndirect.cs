@@ -15,7 +15,7 @@ public class DrawMeshIndirect : DrawMeshGPU
     public void Init(Mesh mesh, Material material, ComputeShader compute, int res, GraphFunction f)
     {
         base.Init(mesh, material, res, f);
-        kernel = compute.FindKernel("CSMain");
+        kernel = compute.FindKernel("Culling");
         mainCamera = Camera.main;
         cullingComputer = compute;
 
@@ -23,9 +23,9 @@ public class DrawMeshIndirect : DrawMeshGPU
         argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
 
-    public override void UpdateBuffers() 
+    public override void UpdateBuffers(Vector3 offset) 
     {
-        base.UpdateBuffers();
+        base.UpdateBuffers(offset);
 
         if (instanceMesh != null)
             subMeshIndex = Mathf.Clamp(subMeshIndex, 0, instanceMesh.subMeshCount - 1);
@@ -47,14 +47,25 @@ public class DrawMeshIndirect : DrawMeshGPU
 
     public override void Draw()
     {
-        Profiler.BeginSample("DrawMeshInstance");
+        Profiler.BeginSample("FrustumCullingWithComputeShader");
+        int count = resolution * resolution;
+        Vector4[] planes = CameraTools.GetFrustumPlanes();
 
-        instanceMaterial.SetBuffer("positionBuffer", l2wMatBuffer);
+        cullResult.SetCounterValue(0);
+        cullingComputer.SetInt(ShaderIDs._Count, count);
+        cullingComputer.SetVectorArray(ShaderIDs._Planes, planes);
+        cullingComputer.SetBuffer(kernel, ShaderIDs._l2wMats, l2wMatBuffer);
+        cullingComputer.SetBuffer(kernel, ShaderIDs._cullingResults, cullResult);
+
+        cullingComputer.Dispatch(kernel, 1 + (count / 64), 1, 1);
+
+        Profiler.EndSample();
+
+        ComputeBuffer.CopyCount(cullResult, argsBuffer, sizeof(uint));
+        instanceMaterial.SetBuffer(ShaderIDs._positionBuffer, cullResult);
 
         Vector3 bounds = Vector3.one * 1000;
         Graphics.DrawMeshInstancedIndirect(instanceMesh, subMeshIndex, instanceMaterial, new Bounds(Vector3.zero, bounds), argsBuffer);
-
-        Profiler.EndSample();
     }
 
     public override void OnDestroy()

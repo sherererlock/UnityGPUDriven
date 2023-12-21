@@ -31,7 +31,6 @@ public class RenderMeshIndirect : DrawMeshGPU
         Graphics.RenderMeshIndirect(renderParams, instanceMesh, commandBuffer, commandCount);
     }
 
-
     public override void OnDestroy()
     {
         base.OnDestroy();

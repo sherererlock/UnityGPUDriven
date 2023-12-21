@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b92189c3e4c187945ae253704dce9797
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141370
+  packageName: Camera Operate
+  packageVersion: 1.0
+  assetPath: Assets/H4CameraOperate/Assets/Scripts/CameraOperate.cs
+  uploadId: 299822

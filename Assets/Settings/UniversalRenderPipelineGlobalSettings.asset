@@ -17,13 +17,15 @@ MonoBehaviour:
       m_List:
       - rid: 3835307026302631936
       - rid: 3835307026302631937
-      - rid: 3835307026302631938
-      - rid: 3835307026302631939
-      - rid: 3835307026302631940
-      - rid: 3835307026302631941
-      - rid: 3835307026302631942
+      - rid: 3835307048681078992
+      - rid: 3835307048681078993
+      - rid: 3835307048681078994
+      - rid: 3835307048681078995
+      - rid: 3835307048681078996
     m_RuntimeSettings:
-      m_List: []
+      m_List:
+      - rid: 3835307026302631936
+      - rid: 3835307026302631937
   m_AssetVersion: 5
   m_DefaultVolumeProfile: {fileID: 11400000, guid: 4377c8fcb0d1dfe42a228b26e09d870c,
     type: 2}
@@ -84,7 +86,7 @@ MonoBehaviour:
           type: 3}
         m_BayerMatrixTex: {fileID: 2800000, guid: f9ee4ed84c1d10c49aabb9b210b0fc44,
           type: 3}
-    - rid: 3835307026302631938
+    - rid: 3835307048681078992
       type: {class: GPUResidentDrawerResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.GPUDriven.Runtime}
       data:
         m_Version: 0
@@ -96,7 +98,7 @@ MonoBehaviour:
           type: 3}
         m_WindDataUpdaterKernels: {fileID: 7200000, guid: fde76746e4fd0ed418c224f6b4084114,
           type: 3}
-    - rid: 3835307026302631939
+    - rid: 3835307048681078993
       type: {class: ProbeVolumeDebugResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_Version: 1
@@ -112,7 +114,7 @@ MonoBehaviour:
           type: 3}
         numbersDisplayTex: {fileID: 2800000, guid: 73fe53b428c5b3440b7e87ee830b608a,
           type: 3}
-    - rid: 3835307026302631940
+    - rid: 3835307048681078994
       type: {class: ProbeVolumeRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_Version: 1
@@ -122,14 +124,14 @@ MonoBehaviour:
           type: 3}
         probeVolumeUploadDataL2CS: {fileID: 7200000, guid: 6196f34ed825db14b81fb3eb0ea8d931,
           type: 3}
-    - rid: 3835307026302631941
+    - rid: 3835307048681078995
       type: {class: IncludeAdditionalRPAssets, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_version: 0
         m_IncludeReferencedInScenes: 0
         m_IncludeAssetsByLabel: 0
         m_LabelToInclude: 
-    - rid: 3835307026302631942
+    - rid: 3835307048681078996
       type: {class: ProbeVolumeGlobalSettings, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_Version: 1
